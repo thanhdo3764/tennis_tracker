@@ -1,5 +1,8 @@
+from my_app.constants import *
 import matplotlib.pyplot as plt
-from constants import COURT_LENGTH, COURT_WIDTH_DOUBLES, COURT_WIDTH_SINGLES, SERVICE_LINE_DIST
+from cv2 import findHomography, perspectiveTransform
+import numpy as np
+
 
 def draw_court(ax):
 	# Outer court
@@ -26,9 +29,28 @@ def draw_court(ax):
 	ax.set_aspect("equal")
 	ax.axis("off")
 
+def draw_ball_landing(ax, landings):
+	xs, ys = zip(*landings)
+	ax.scatter(xs, ys, c="yellow", edgecolors="black", s=100, zorder=5)
+
+def image_to_top_down_pts(img_pts, img_ball_pt):
+	homography_matrix, _ = findHomography(np.array(img_pts, dtype=np.float32), np.array(list(WORLD_PTS.values()), dtype=np.float32))
+	np_img_ball_pt = np.array([[[*img_ball_pt]]], dtype=np.float32)
+	world_ball_pt = perspectiveTransform(np_img_ball_pt, homography_matrix)
+	x, y = world_ball_pt[0][0]
+	print(x,y)
+	return (x,y)
+
 def main():
-	fig, ax = plt.subplots(figsize=(6, 5))  # 1 & 2
-	draw_court(ax)                           # 3
+
+	fig, ax = plt.subplots(figsize=(6, 5))
+	draw_court(ax)
+	landings = [
+	    (1.2, -5.3),
+	    (-0.8, -6.0),
+	    (0.3, -4.9),
+	]
+	draw_ball_landing(ax, landings)
 	plt.show()
 
 if __name__ == '__main__':

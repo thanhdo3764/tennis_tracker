@@ -10,7 +10,7 @@ class TestMain(unittest.TestCase):
 		world_pts = list(WORLD_PTS.values())
 		t = Transformer(img_pts)
 		for i in range(4):
-			converted_pt = t.convert_ball_landing(img_pts[i])
+			converted_pt = t.convert_points(img_pts[i])
 			self.assertEqual(converted_pt, world_pts[i])
 
 if __name__ == '__main__':
